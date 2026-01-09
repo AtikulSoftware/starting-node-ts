@@ -1,15 +1,18 @@
-require("dotenv").config();
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import dotenv from "dotenv";
 import express, { NextFunction, Request, Response } from "express";
+
+// load env variables
+dotenv.config();
 
 import { ErrorMiddleware } from "./middleware/error";
 import userRouter from "./routes/user.route";
 
 // create app
 const app = express();
-app.use(express.json({ limit: "50mb" })); // body parser
-app.use(cookieParser()); // cookie parser
+app.use(express.json({ limit: "50mb" }));
+app.use(cookieParser());
 
 // cors setup
 app.use(
@@ -22,7 +25,7 @@ app.use(
 app.use("/api/users", userRouter);
 
 // unknown route
-app.use("*", (req: Request, res: Response, next: NextFunction) => {
+app.use("/{*any}", (req: Request, res: Response, next: NextFunction) => {
   const err = new Error(`Route ${req.originalUrl} not found`) as any;
   err.statusCode = 404;
   next(err);
